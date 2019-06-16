@@ -1,4 +1,4 @@
-package day1;
+package day2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,31 +7,23 @@ import java.util.Map;
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.path.json.JsonPath;
 import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
 
-public class GetAllChange {
+public class GetAllChange extends BaseRestAssured {
 	
 	@Test
-	public void getAllIncidents() {
-		
-		// End Point
-		RestAssured.baseURI ="https://dev81252.service-now.com/api/now/table/change_request";
-		
-		// Set up Authentication
-		RestAssured.authentication = 
-				RestAssured.basic("admin", "Lw4bN4WAkdRe");
+	public void getAllChanges() {
 		
 		Map<String,String> parametersMap = new HashMap<String, String>();
 		parametersMap.put("type","normal");
 		parametersMap.put("category","network");
 		
 		// Send the request
-		Response response = RestAssured
-				.given()
-				.header(new Header("accept", "application/xml"))
+		Response response = rSpec				
 				.params(parametersMap)
 				.get();
 		
@@ -46,12 +38,9 @@ public class GetAllChange {
 		// Response - XML
 		XmlPath xml = response.xmlPath();
 		
-		// Get the incident
-		List<String> list = xml.getList("response.result.sys_id");
-		System.out.println(list.size());
-		for (String each : list) {
-			System.out.println(each);
-		}
+		// Get the first change
+		sys_id = (String) xml.getList("response.result.sys_id").get(0);
+		System.out.println(sys_id);
 		
 	}
 

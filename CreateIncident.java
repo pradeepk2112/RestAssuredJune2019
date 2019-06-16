@@ -1,4 +1,4 @@
-package day1;
+package day2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,31 +11,35 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
-public class CreateIncident {
+public class CreateIncident{
 	
 	@Test
-	public void getAllIncidents() {
+	public void createIncident() {		
 		
-		// End Point
-		RestAssured.baseURI ="https://dev81252.service-now.com/api/now/table/incident";
-		
+		RestAssured.baseURI =
+				"https://dev81252.service-now.com"
+				+ "/api/now/table/incident";
+
 		// Set up Authentication
 		RestAssured.authentication = 
-				RestAssured.basic("admin", "Lw4bN4WAkdRe");
-		
+				RestAssured.basic("admin", 
+						"Lw4bN4WAkdRe");
 		
 		Response response = RestAssured
 			.given()
-			.contentType(ContentType.JSON)
-			.body("{\"short_description\" : \"Automated from Rest Assured\"}")
-			.post();
+			.log()
+			.all()
+			.contentType("application/json")
+			// application/x-www-form-urlencoded
+		//	.formParam("short_description", "Automated from Rest Assured")
+			.post("/");
 		
 		int statusCode = response.statusCode();
 		System.out.println(statusCode);
 		
 		JsonPath jsonPath = response.jsonPath();
-		String number = jsonPath.get("result.number");
-		System.out.println(number);
+		String sys_id = jsonPath.get("result.number");
+		System.out.println(sys_id);
 		
 	}
 
